@@ -1,0 +1,87 @@
+# Training configurations used for the reported checkpoints.
+# Per-device batch and world size reproduce an effective global batch near 1024.
+
+common:
+  model: progresvit
+  progress_stages: [3, 6]
+  depth: 12
+  patch_size: 16
+  optimizer: adamw
+  lr_base: 0.0005
+  lr_base_size: 512
+  lr_base_scale: linear
+  weight_decay: 0.05
+  epochs: 300
+  cooldown_epochs: 10
+  warmup_epochs: 5
+  min_lr: 0.00001
+  drop_path: 0.1
+  seed: 42
+  model_ema: true
+  model_ema_decay: 0.99996
+  equal_stage_loss_weights: true
+
+runs:
+  192_240:
+    initializer: deit_small_patch16_224.fb_in1k
+    progress_img_sizes: [192, 240]
+    loader_input_size: [3, 240, 240]
+    world_size: 5
+    batch_size_per_device: 204
+    grad_accum_steps: 1
+    effective_global_batch: 1020
+    amp: false
+    distillation_type: none
+
+  160_384:
+    initializer: deit_small_patch16_224.fb_in1k
+    progress_img_sizes: [160, 384]
+    loader_input_size: [3, 384, 384]
+    world_size: 2
+    batch_size_per_device: 256
+    grad_accum_steps: 2
+    effective_global_batch: 1024
+    amp: false
+    distillation_type: none
+
+  192_240_kd:
+    initializer: deit3_small_patch16_384.fb_in22k_ft_in1k
+    progress_img_sizes: [192, 240]
+    loader_input_size: [3, 384, 384]
+    world_size: 4
+    batch_size_per_device: 256
+    grad_accum_steps: 1
+    effective_global_batch: 1024
+    amp: true
+    amp_dtype: bfloat16
+    model_kwargs:
+      init_values: 0.000001
+    distillation_type: hard
+    distillation_alpha: 0.5
+    supervised_loss_weight: 0.5
+    distillation_loss_weight: 0.5
+    distillation_scope: all_progressive_outputs
+    distillation_duration_epochs: 300
+    teacher_model: deit3_base_patch16_384.fb_in22k_ft_in1k
+    teacher_pretrained: true
+
+  160_384_kd:
+    initializer: deit3_small_patch16_384.fb_in22k_ft_in1k
+    progress_img_sizes: [160, 384]
+    loader_input_size: [3, 384, 384]
+    world_size: 2
+    batch_size_per_device: 256
+    grad_accum_steps: 2
+    effective_global_batch: 1024
+    amp: true
+    amp_dtype: bfloat16
+    model_kwargs:
+      init_values: 0.000001
+    distillation_type: hard
+    distillation_alpha: 0.5
+    supervised_loss_weight: 0.5
+    distillation_loss_weight: 0.5
+    distillation_scope: all_progressive_outputs
+    distillation_duration_epochs: 300
+    teacher_model: deit3_base_patch16_384.fb_in22k_ft_in1k
+    teacher_pretrained: true

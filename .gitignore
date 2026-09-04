@@ -1,0 +1,26 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+.git-tools/
+
+# Checkpoint weights stay local; metadata remains versioned.
+checkpoints/*.pth.tar
+checkpoints/initializers/
+checkpoints/.cache/
+
+# Training artifacts belong outside the source tree.
+output/
+outputs/
+runs/
+*.log
+slurm-*.out
+slurm-*.err
+
+# Paper plotting sources and generated artifacts stay local.
+/plots/

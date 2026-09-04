@@ -1,0 +1,4 @@
+# Keep source and tabular data consistent across platforms.
+* text=auto eol=lf
+*.pdf binary
+*.png binary
